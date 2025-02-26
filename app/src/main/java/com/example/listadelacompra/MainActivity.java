@@ -24,10 +24,14 @@ public class MainActivity extends AppCompatActivity {
 
     protected TextView texto1;
     protected EditText caja1;
+    protected EditText caja2;
+    protected EditText caja3;
     protected Button boton1;
     protected ListView lista1;
 
     protected String contenidoCaja1="";
+    protected String contenidoCaja2="";
+    protected String contenidoCaja3="";
     protected GestorBaseDatos gdb;
 
     protected ArrayList<String> listaProductos = new ArrayList<String>();
@@ -47,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
 
         texto1 = (TextView) findViewById(R.id.texto1_main);
         caja1 = (EditText) findViewById(R.id.caja1_main);
+        caja2 = (EditText) findViewById(R.id.caja2_main);
+        caja3 = (EditText) findViewById(R.id.caja3_main);
         boton1 = (Button) findViewById(R.id.boton1_main);
         lista1 = (ListView) findViewById(R.id.lista1_main);
 
@@ -60,12 +66,23 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 contenidoCaja1 = caja1.getText().toString();
+                contenidoCaja2 = caja2.getText().toString();
+                contenidoCaja3 = caja3.getText().toString();
                 if(contenidoCaja1.equalsIgnoreCase(""))
                 {
                     Toast.makeText(MainActivity.this, "Debe de rellenar la caja de texto", Toast.LENGTH_SHORT).show();
                 }else
                 {
                     caja1.setText("");
+                    caja2.setText("");
+                    caja3.setText("");
+                   if(gdb.insertarProducto(contenidoCaja1, Float.parseFloat(contenidoCaja2),Integer.parseInt(contenidoCaja3)))
+                   {
+                       Toast.makeText(MainActivity.this, "Producto añadido correctamente", Toast.LENGTH_SHORT).show();
+                   }
+                   else {
+                       Toast.makeText(MainActivity.this, "No se pudo añadir el producto", Toast.LENGTH_SHORT).show();
+                   }
                 }
             }
         });
