@@ -1,8 +1,11 @@
 package com.example.listadelacompra;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
     protected ArrayList<String> listaProductos = new ArrayList<String>();
     protected ArrayAdapter<String> adaptador;
+    protected String contenidoItem="";
+    protected String[] partes;
 
 
     @Override
@@ -61,6 +66,48 @@ public class MainActivity extends AppCompatActivity {
         adaptador = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listaProductos);
         lista1.setAdapter(adaptador);
 
+        lista1.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                contenidoItem = adapterView.getItemAtPosition(i).toString();
+
+               // Toast.makeText(MainActivity.this, "Contenido item" +contenidoItem, Toast.LENGTH_SHORT).show();
+
+                partes = contenidoItem.split(".-");
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setMessage("¿Desea eliminar el producto "+partes[1]+"?")
+                        .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // START THE GAME!
+                                if (gdb.borrarProducto(partes[0]))
+                                {
+                                    Toast.makeText(MainActivity.this, "Producto borrado correctamente", Toast.LENGTH_SHORT).show();
+                                    adaptador.clear();
+                                    listaProductos = gdb.obtenerProductos(); //Se va ha actualizar el arraylist tras la inserccion de los datos
+                                    adaptador.addAll(listaProductos); //Actualizar nuevos datos
+                                    adaptador.notifyDataSetChanged();//notifica que se han producido cambios
+                                }
+                                else
+                                {
+                                    Toast.makeText(MainActivity.this, "No se pudo borrar el producto", Toast.LENGTH_SHORT).show();
+
+                                }
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancels the dialog.
+                            }
+                        });
+                // Create the AlertDialog object and return it.
+                builder.create();
+                builder.show();
+
+                return true;
+            }
+        });
+
         boton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,6 +126,11 @@ public class MainActivity extends AppCompatActivity {
                    if(gdb.insertarProducto(contenidoCaja1, Float.parseFloat(contenidoCaja2),Integer.parseInt(contenidoCaja3)))
                    {
                        Toast.makeText(MainActivity.this, "Producto añadido correctamente", Toast.LENGTH_SHORT).show();
+                       adaptador.clear();
+                       listaProductos = gdb.obtenerProductos(); //Se va ha actualizar el arraylist tras la inserccion de los datos
+                       adaptador.addAll(listaProductos); //Actualizar nuevos datos
+                       adaptador.notifyDataSetChanged();//notifica que se han producido cambios
+
                    }
                    else {
                        Toast.makeText(MainActivity.this, "No se pudo añadir el producto", Toast.LENGTH_SHORT).show();
