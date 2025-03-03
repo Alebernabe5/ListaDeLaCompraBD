@@ -2,9 +2,9 @@ package com.example.listadelacompra;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,7 +19,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.awt.font.TextAttribute;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     protected ArrayAdapter<String> adaptador;
     protected String contenidoItem="";
     protected String[] partes;
+    protected Intent pasarPantalla;
 
 
     @Override
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.boton1_actualizar), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -66,14 +66,28 @@ public class MainActivity extends AppCompatActivity {
         adaptador = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listaProductos);
         lista1.setAdapter(adaptador);
 
+        lista1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                contenidoItem = adapterView.getItemAtPosition(i).toString();
+
+                partes = contenidoItem.split(".-");
+
+                pasarPantalla =new Intent(MainActivity.this, actualizarProductoActivity.class);
+                pasarPantalla.putExtra("ID", partes[0]); //Con esto mando el paquete que tiene dos partes
+                startActivity(pasarPantalla);
+
+
+            }
+        });
+
+
         lista1.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                contenidoItem = adapterView.getItemAtPosition(i).toString();
+
 
                // Toast.makeText(MainActivity.this, "Contenido item" +contenidoItem, Toast.LENGTH_SHORT).show();
-
-                partes = contenidoItem.split(".-");
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setMessage("¿Desea eliminar el producto "+partes[1]+"?")
