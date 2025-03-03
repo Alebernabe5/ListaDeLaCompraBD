@@ -4,6 +4,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -152,5 +155,28 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection.
+        int id = item.getItemId();
+        if (id ==R.id.item_main_borrar){
+            gdb.borrarTodosLosProductos();
+            Toast.makeText(this, "Se han borrado todos los productos correctamente", Toast.LENGTH_SHORT).show();
+            adaptador.clear();
+            listaProductos = gdb.obtenerProductos(); //Se va ha actualizar el arraylist tras la inserccion de los datos
+            adaptador.addAll(listaProductos); //Actualizar nuevos datos
+            adaptador.notifyDataSetChanged();
+            return true;
+        }
+        else {
+            return super.onOptionsItemSelected(item);
+        }
     }
 }

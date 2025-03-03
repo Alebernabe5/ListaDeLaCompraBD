@@ -32,6 +32,25 @@ public class GestorBaseDatos extends SQLiteOpenHelper {
 
     }
 
+    public boolean actualizarProducto (int id, String nombre, float precio, int cantidad){
+
+        if (existeIdProductos(Integer.toString(id))){
+            //Lo puedo actualizar
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("UPDATE productos SET nombre='"+nombre+"',precio="+precio+",cantidad="+cantidad+" WHERE id="+id); //Consulta de actualizacion
+            if (existeProductos(nombre)){
+                return true;
+            }
+
+        }
+        else {
+            return false;
+        }
+
+
+        return true;
+    }
+
     public boolean borrarProducto (String id)
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -42,6 +61,13 @@ public class GestorBaseDatos extends SQLiteOpenHelper {
 
         }
         return true;
+
+    }
+
+    public void borrarTodosLosProductos()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM productos WHERE id>=0");
 
     }
 
@@ -62,16 +88,14 @@ public class GestorBaseDatos extends SQLiteOpenHelper {
     {
         Producto pro; //Defino el objeto
 
-        if (existeProductos(id)) {
+        if (existeIdProductos(id)) {
             SQLiteDatabase db = this.getReadableDatabase();
-            Cursor cur = db.rawQuery("SELECT * FROM productos WHERE id=" + id, null);
-
+            Cursor cur = db.rawQuery("SELECT * FROM productos WHERE id="+ id, null);
             if (cur != null) {
 
                 cur.moveToFirst(); //Voy a la primera fila y entro en el bucle
                 pro = new Producto(cur.getInt(0), cur.getString(1), cur.getFloat(2),cur.getInt(3));
                 return pro;
-                
             }
         }
 
